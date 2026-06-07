@@ -71,6 +71,7 @@ public class ParentService : IParentService
     private static StudentResponse MapToStudentResponse(Student student) => new()
     {
         Id = student.Id,
+        RouteId = student.ServiceRouteId, 
         FullName = student.FullName,
         SchoolName = student.SchoolName,
         PickupAddress = student.PickupAddress,

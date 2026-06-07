@@ -3,6 +3,7 @@ namespace Sisora.API.Models.DTOs.Responses;
 public class StudentResponse
 {
     public Guid Id { get; set; }
+    public Guid RouteId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string SchoolName { get; set; } = string.Empty;
     public string? PickupAddress { get; set; }
