@@ -497,3 +497,7 @@ frontend/.env
 
 
 **/appsettings.Development.json
+
+
+frontend/.env.local
+frontend/.env
