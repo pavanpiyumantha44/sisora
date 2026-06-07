@@ -494,3 +494,6 @@ $RECYCLE.BIN/
 frontend/node_modules/
 frontend/dist/
 frontend/.env
+
+
+**/appsettings.Development.json
