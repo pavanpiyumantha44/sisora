@@ -501,4 +501,4 @@ frontend/.env
 
 frontend/.env.local
 frontend/.env
-**/firebase-adminsdk.json
+**/firebase-adminsdk.jsonbfg.jar
