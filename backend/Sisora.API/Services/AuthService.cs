@@ -272,4 +272,24 @@ public class AuthService : IAuthService
             _ => string.Empty
         };
     }
+    public async Task<ApiResponse<bool>> RegisterFcmTokenAsync(string userId, string role, string token)
+    {
+        switch (role)
+        {
+            case "Driver":
+                var driver = await _context.Drivers.FindAsync(Guid.Parse(userId));
+                if (driver == null) return ApiResponse<bool>.Fail("Driver not found.");
+                driver.FcmToken = token;
+                break;
+
+            case "Parent":
+                var parent = await _context.Parents.FindAsync(Guid.Parse(userId));
+                if (parent == null) return ApiResponse<bool>.Fail("Parent not found.");
+                parent.FcmToken = token;
+                break;
+        }
+
+        await _context.SaveChangesAsync();
+        return ApiResponse<bool>.Ok(true, "FCM token registered.");
+    }
 }

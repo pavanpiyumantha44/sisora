@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginDriver, loginParent, loginAdmin } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth';
+import { requestNotificationPermission } from '../../utils/firebase';
+import { registerFcmToken } from '../../api/auth';
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -44,6 +46,11 @@ const LoginPage = () => {
         fullName: data.data.fullName,
         userId: data.data.userId
       });
+      
+      const fcmToken = await requestNotificationPermission();
+      if (fcmToken) {
+        await registerFcmToken(fcmToken);
+      }
 
       if (data.data.role === 'Driver') navigate('/driver');
       else if (data.data.role === 'Parent') navigate('/parent');

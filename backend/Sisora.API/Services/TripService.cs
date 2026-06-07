@@ -16,15 +16,18 @@ public class TripService : ITripService
     private readonly AppDbContext _context;
     private readonly ILocationService _locationService;
     private readonly IHubContext<TripHub> _hubContext;
+    private readonly INotificationService _notificationService;
 
     public TripService(
         AppDbContext context,
         ILocationService locationService,
-        IHubContext<TripHub> hubContext)
+        IHubContext<TripHub> hubContext,
+        INotificationService notificationService)
     {
         _context = context;
         _locationService = locationService;
         _hubContext = hubContext;
+        _notificationService = notificationService;
     }
 
     // ── Start Trip ────────────────────────────────────────
@@ -60,6 +63,20 @@ public class TripService : ITripService
 
         await _context.Trips.AddAsync(trip);
         await _context.SaveChangesAsync();
+
+        // notify all parents on this route
+        var parentTokens = await _context.ParentStudents
+            .Where(ps => ps.Student.ServiceRouteId == routeId)
+            .Include(ps => ps.Parent)
+            .Select(ps => ps.Parent.FcmToken)
+            .Where(t => t != null)
+            .ToListAsync();
+
+        await _notificationService.SendToMultipleAsync(
+            parentTokens!,
+            "Van is on the way 🚐",
+            $"{route.Name} has started. Your child's van is on the way."
+        );
 
         // notify all parents on this route via SignalR
         await _hubContext.Clients
@@ -175,6 +192,22 @@ public class TripService : ITripService
 
         await _context.TripEvents.AddAsync(tripEvent);
         await _context.SaveChangesAsync();
+
+        // notify the student's parents
+        var parentTokens = await _context.ParentStudents
+            .Where(ps => ps.StudentId == student.Id)
+            .Include(ps => ps.Parent)
+            .Select(ps => ps.Parent.FcmToken)
+            .Where(t => t != null)
+            .ToListAsync();
+
+        var eventText = eventType == TripEventType.PickedUp ? "picked up ✓" : "dropped off ✓";
+
+        await _notificationService.SendToMultipleAsync(
+            parentTokens!,
+            $"{student.FullName} has been {eventText}",
+            $"{student.FullName} was {eventText} at {DateTime.Now:hh:mm tt}"
+        );
 
         var eventResponse = new TripEventResponse
         {

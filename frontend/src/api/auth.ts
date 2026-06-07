@@ -33,3 +33,6 @@ export const loginAdmin = (data: {
   email: string;
   password: string;
 }) => apiClient.post<ApiResponse<AuthResponse>>('/api/auth/admin/login', data);
+
+export const registerFcmToken = (token: string) =>
+  apiClient.post('/api/auth/fcm-token', { token });
