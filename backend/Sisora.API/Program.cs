@@ -7,6 +7,8 @@ using Sisora.API.Helpers;
 using Sisora.API.Services;
 using Sisora.API.Services.Interfaces;
 using Scalar.AspNetCore;
+using StackExchange.Redis;
+using Sisora.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +87,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+// ── Redis ─────────────────────────────────────────────────
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(builder.Configuration["Redis:ConnectionString"]!));
+
+// ── SignalR ───────────────────────────────────────────────
+builder.Services.AddSignalR();
+
+// ── Trip Services ─────────────────────────────────────────
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<ITripService, TripService>();
 
 var app = builder.Build();
 
@@ -106,5 +118,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+app.MapHub<TripHub>("/hubs/trip");
 app.Run();
