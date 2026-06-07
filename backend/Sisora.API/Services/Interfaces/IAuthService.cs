@@ -12,4 +12,5 @@ public interface IAuthService
     Task<ApiResponse<AuthResponse>> LoginAdminAsync(AdminLoginRequest request);
     Task<ApiResponse<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
     Task<ApiResponse<bool>> RevokeTokenAsync(string refreshToken);
+    Task<ApiResponse<bool>> RegisterFcmTokenAsync(string userId, string role, string token);
 }

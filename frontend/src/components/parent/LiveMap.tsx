@@ -33,8 +33,11 @@ const LiveMap = ({ student }: Props) => {
         if (res.data.success && res.data.data) {
           setActiveTrip(res.data.data);
         }
-      } catch {
-        // no active trip
+      } catch (err: unknown) {
+        const axiosErr = err as { response?: { status: number } };
+        if (axiosErr.response?.status !== 404) {
+          console.error('Error fetching active trip:', err);
+        }
       }
     };
     fetchActiveTrip();

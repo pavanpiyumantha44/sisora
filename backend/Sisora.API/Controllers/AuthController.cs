@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sisora.API.Models.DTOs.Requests;
 using Sisora.API.Services.Interfaces;
@@ -68,6 +70,17 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenRequest request)
     {
         var result = await _authService.RevokeTokenAsync(request.RefreshToken);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("fcm-token")]
+    [Authorize]
+    public async Task<IActionResult> RegisterFcmToken([FromBody] RegisterFcmTokenRequest request)
+    {
+        var result = await _authService.RegisterFcmTokenAsync(
+            User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+            User.FindFirstValue(ClaimTypes.Role)!,
+            request.Token);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

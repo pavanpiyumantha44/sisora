@@ -23,6 +23,7 @@ builder.Services.AddSingleton<JwtHelper>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IParentService, ParentService>();
+builder.Services.AddSingleton<INotificationService, NotificationService>();
 
 // ── JWT Authentication ────────────────────────────────────
 var jwtSecret = builder.Configuration["JwtSettings:Secret"]!;

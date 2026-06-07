@@ -24,9 +24,18 @@ const ActiveTrip = () => {
 
   const startLocationBroadcast = (tripId: string) => {
     locationInterval.current = setInterval(() => {
-      navigator.geolocation.getCurrentPosition(pos => {
-        updateLocation(tripId, pos.coords.latitude, pos.coords.longitude);
-      });
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          updateLocation(tripId, pos.coords.latitude, pos.coords.longitude)
+            .catch(err => {
+              if (err.response?.status === 403 || err.response?.status === 401) {
+                // token expired — stop broadcasting
+                if (locationInterval.current) clearInterval(locationInterval.current);
+              }
+            });
+        },
+        err => console.warn('Geolocation error:', err)
+      );
     }, 5000);
   };
 
