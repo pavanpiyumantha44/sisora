@@ -72,6 +72,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Trip>()
             .Property(t => t.Status)
             .HasConversion<string>();
+            
+        modelBuilder.Entity<Trip>()
+            .HasOne(t => t.ServiceRoute)
+            .WithMany(r => r.Trips)
+            .HasForeignKey(t => t.ServiceRouteId);
 
         // --- TripEvent ---
         modelBuilder.Entity<TripEvent>()
