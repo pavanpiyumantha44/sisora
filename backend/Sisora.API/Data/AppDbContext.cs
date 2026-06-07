@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<Trip> Trips => Set<Trip>();
     public DbSet<TripEvent> TripEvents => Set<TripEvent>();
     public DbSet<Admin> Admins => Set<Admin>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
